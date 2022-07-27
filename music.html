@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	 <meta name="description" content="Music Player ">
+  <meta name="keywords" content="music player">
+  <meta name="author" content="Mohd Azkar">
+    <title>Music Player </title>
+</head>
+<link rel="stylesheet" href="style.css">
+
+<body>
+    <div class="main_div">
+        <div class="music_container">
+            <h2 id="title">LOTUS LANE</h2>
+            <h3 id="artist">The locallist</h3>
+
+            <div class="img_container">
+                <img src="image/music1.png" alt="" srcset="">
+            </div>
+            <audio src="music/1.mp3"></audio>
+            <!-- progress bar -->
+            <div class="progressbar_container" id="progress_container">
+                <div class="progress_duration_meter">
+                    <div id="current_time">0:00</div>
+                    <div id="duration">2:44</div>
+                </div>
+                <div class="progress_div" id="progress_div">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+            <div class="music_controls">
+                <i class="fa-solid fa-backward" id="prev" title="Previous"></i>
+                <i class="fa-solid fa-play main-button" id="play" title="Play"></i>
+                <i class="fa-solid fa-forward" id="next" title="Next"></i>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/aa19909f03.js" crossorigin="anonymous"></script>
+    <script>
+        const play = document.getElementById("play")
+        const next = document.getElementById("next")
+        const prev = document.getElementById("prev")
+        const music = document.querySelector("audio")
+        const img = document.querySelector("img");
+        const title = document.getElementById("title")
+        const artist = document.getElementById("artist")
+        const progress = document.getElementById("progress")
+        const progress_div = document.getElementById("progress_div")
+        const current_time = document.getElementById("current_time")
+        const tot_duration = document.getElementById("duration")
+
+        console.log(music)
+
+        let isPlaying = false;
+        var musicIndex = 0;
+
+
+        const songs = [
+            { name: "1.mp3", title: "yaariayn", artist: "arjit singh" },
+            { name: "2.mp3", title: "Tum hi ho", artist: "Emotinal love" },
+            { name: "3.mp3", title: "bate ye kabhi na", artist: "Broken" }
+        ]
+
+        const loadMusic = (song) => {
+            music.src = `music/${song.name}`;  //"music/1.mp3"
+            // console.log(song.title)
+            // console.log(song.artist)
+            title.textContent = song.title;
+            artist.textContent = song.artist
+            // console.log(title)
+
+        }
+
+        loadMusic(songs[musicIndex])
+
+        const playMusic = () => {
+            music.play();
+            play.classList.replace("fa-play", "fa-pause")
+            img.classList.add("anime")
+            isPlaying = true;
+
+        }
+        const pauseMusic = () => {
+            music.pause();
+            isPlaying = false;
+            img.classList.remove("anime")
+            play.classList.replace("fa-pause", "fa-play")
+
+        }
+
+        play.addEventListener('click', () => {
+            if (!isPlaying) {
+                playMusic();
+
+            }
+            else {
+                pauseMusic()
+
+            }
+        })
+
+        next.addEventListener("click", () => {
+            musicIndex = (musicIndex + 1) % songs.length;
+            loadMusic(songs[musicIndex]);
+            playMusic();
+        })
+        prev.addEventListener("click", () => {
+            musicIndex = (musicIndex - 1) % songs.length;
+            loadMusic(songs[musicIndex]);
+            playMusic();
+        })
+
+
+        music.addEventListener("timeupdate", (event) => {
+            // console.log(event )
+            const { currentTime, duration } = event.srcElement;
+            // console.log(currentTime)
+            let progressTime = (currentTime / duration) * 100;
+            progress.style.width = `${progressTime}%`
+
+            // updateTime
+            let min_duration = Math.floor(duration / 60);
+            let sec_duration = Math.floor(duration % 60);
+            if (duration) {
+
+                tot_duration.textContent = `${min_duration}:${sec_duration}`
+            }
+
+
+            min_duration = Math.floor(currentTime / 60);
+            sec_duration = Math.floor(currentTime % 60);
+            current_time.textContent = `${min_duration}:${sec_duration}`
+
+
+
+        })
+
+        progress_div.addEventListener("click", (event) => {
+            console.log(event)
+            const{ duration } = music;
+            
+            let move_progress=(event.offsetX / 290) * duration;
+            console.log(duration);
+            // console.log(event.offsetX)
+            // console.log(event.srcElement.clientWidth)
+            // console.log(move_progress);
+            music.currentTime = move_progress;
+        });
+        music.addEventListener("ended", playMusic)
+
+
+    </script>
+
+</body>
+
+</html>
